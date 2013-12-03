@@ -65,7 +65,8 @@ licensed under <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
 1.1.  <a href="#library">Library</a><br>
 1.1.1.  <a href="#clutils">CL Utils</a><br>
 1.1.2.  <a href="#clprofiler">CL Profiler</a><br>
-1.1.3.  <a href="#gerrorframework">GError framework</a><br>
+1.1.3.  <a href="#clerrors">CL Errors</a><br>
+1.1.4.  <a href="#gerrorframework">GError framework</a><br>
 1.2.  <a href="#utilities">Utilities</a><br>
 1.2.1.  <a href="#devicequery">Device query</a><br>
 1.2.2.  <a href="#kernelinfo">Kernel info</a><br>
@@ -78,7 +79,8 @@ licensed under <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
 2.3.1.  <a href="#compilingandlinking">Compiling and linking</a><br>
 2.3.2.  <a href="#usingclutils">Using CL Utils</a><br>
 2.3.3.  <a href="#usingclprofiler">Using CL Profiler</a><br>
-2.3.4.  <a href="#usinggerrorframeworkgerrorf">Using GError Framework (GErrorF)</a><br>
+2.3.4.  <a href="#usingclerrors">Using CL Errors</a><br>
+2.3.5.  <a href="#usinggerrorframeworkgerrorf">Using GError Framework (GErrorF)</a><br>
 2.4.  <a href="#generatingtheapidocumentation">Generating the API documentation</a><br>
 3.  <a href="#otherusefulcframeworks/utilitiesforopencl">Other useful C frameworks/utilities for OpenCL</a>  </p>
 
@@ -95,6 +97,7 @@ licensed under <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
 <ul>
 <li>CL Utils</li>
 <li>CL Profiler</li>
+<li>CL Errors</li>
 <li>GError framework</li>
 </ul>
 </li>
@@ -128,7 +131,9 @@ licensed under <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
 
 <p>The library offers functions which promote the rapid development of 
 OpenCL C programs, <em>CL Utils</em>, as well as their detailed benchmarking,
-<em>CL Profiler</em>. The library also exposes an error handling framework,
+<em>CL Profiler</em>. The library also facilitates error management in two
+ways: i) by converting OpenCL error codes into human readable strings, 
+<em>CL Errors</em>; ii) by exposing a generic error handling framework,
 <em>GError framework</em>, used internally by <em>CL Utils</em> and <em>CL Profiler</em>.</p>
 
 <p><a name="clutils"></a></p>
@@ -168,17 +173,26 @@ absolute execution times. Profiling information is obtained using
 OpenCL events, which can be associated with the relevant OpenCL 
 functions. <em>CL Profiler</em> supports multiple command queues and 
 overlapping events, such as simultaneous kernel executions and data 
-transfers.</p>
+transfers. Profiling information can be exported in a configurable
+format, and plotted using a script included in <em>cf4ocl</em>.</p>
+
+<p><a name="clerrors"></a></p>
+
+<h3>
+<a name="113-cl-errors" class="anchor" href="#113-cl-errors"><span class="octicon octicon-link"></span></a>1.1.3. CL Errors</h3>
+
+<p><em>CL Errors</em> offers a single function which converts a OpenCL error into
+a human readable string.</p>
 
 <p><a name="gerrorframework"></a></p>
 
 <h3>
-<a name="113-gerror-framework" class="anchor" href="#113-gerror-framework"><span class="octicon octicon-link"></span></a>1.1.3. GError framework</h3>
+<a name="114-gerror-framework" class="anchor" href="#114-gerror-framework"><span class="octicon octicon-link"></span></a>1.1.4. GError framework</h3>
 
 <p>The <em>GError framework</em> is internally used by <em>CL Utils</em> and 
 <em>CL Profiler</em> for error handling purposes. However, the framework is not
 in any way tied to OpenCL, so it can be used generically in any C 
-program. It is composed of only two macros and it is based on the 
+program. It is composed of three macros and it is based on the 
 <code>GError</code> object from GLib.</p>
 
 <p><a name="utilities"></a></p>
@@ -256,14 +270,13 @@ package to allow debugging at the GLib level.</p>
 <a name="22-library-utilities-tests-and-examples" class="anchor" href="#22-library-utilities-tests-and-examples"><span class="octicon octicon-link"></span></a>2.2. Library, utilities, tests and examples</h2>
 
 <p>Assuming a working development environment with OpenCL and GLib 
-properly setup, to build everything it is simply necessary to run <code>make</code>
-within the <em>cf4ocl</em> directory.</p>
+properly setup, to build the library, utils and examples it is necessary
+to run <code>make</code> within the <em>cf4ocl</em> directory.</p>
 
 <p>It is possible to build only specific targets, for example:</p>
 
 <pre><code>$ make library
 $ make utils
-$ make tests
 $ make examples
 </code></pre>
 
@@ -271,6 +284,11 @@ $ make examples
 and if GCC can find the OpenCL headers and shared library. If not,
 set the headers location in the <code>CLINCLUDES</code> Makefile variable, and set
 the shared library location in the <code>CLLIBDIR</code> Makefile variable.</p>
+
+<p>The tests should be compiled separately with:</p>
+
+<pre><code>$ make tests
+</code></pre>
 
 <p><a name="usingthelibraryinanewproject"></a></p>
 
@@ -333,7 +351,7 @@ OpenCL functions.</p>
 <p>The first task is performed with the <code>clu_zone_new</code> function, which
 has the following prototype:</p>
 
-<div class="highlight"><pre><span class="n">CLUZone</span><span class="o">*</span> <span class="nf">clu_zone_new</span><span class="p">(</span>
+<div class="highlight highlight-c"><pre><span class="n">CLUZone</span><span class="o">*</span> <span class="nf">clu_zone_new</span><span class="p">(</span>
     <span class="cm">/* Type of device, e.g. CL_DEVICE_TYPE_CPU, CL_DEVICE_TYPE_GPU, etc. */</span>
     <span class="n">cl_uint</span> <span class="n">deviceType</span><span class="p">,</span>
     <span class="cm">/* Number of command queues. */</span>
@@ -354,7 +372,7 @@ device information and an uninitialized kernel program. The program is
 initialized with the <code>clu_program_create</code> function as part of the second 
 task. This function has the following prototype:</p>
 
-<div class="highlight"><pre><span class="n">cl_int</span> <span class="nf">clu_program_create</span><span class="p">(</span>
+<div class="highlight highlight-c"><pre><span class="n">cl_int</span> <span class="nf">clu_program_create</span><span class="p">(</span>
     <span class="cm">/* The CLUZone object return by the clu_zone_new function. */</span>
     <span class="n">CLUZone</span><span class="o">*</span> <span class="n">zone</span><span class="p">,</span> 
     <span class="cm">/* List of files containing the source code for the kernels. */</span>
@@ -370,7 +388,7 @@ task. This function has the following prototype:</p>
 
 <p>A typical usage pattern of CL Utils in a C program:</p>
 
-<div class="highlight"><pre><span class="n">include</span> <span class="s">"clutils.h"</span>
+<div class="highlight highlight-c"><pre><span class="n">include</span> <span class="s">"clutils.h"</span>
 
 <span class="p">...</span>
 
@@ -413,7 +431,7 @@ task. This function has the following prototype:</p>
 <p>The fourth parameter of <code>clu_zone_new</code> is a pointer to a device 
 selector function, which has the following definition:</p>
 
-<div class="highlight"><pre><span class="k">typedef</span> <span class="nf">cl_uint</span> <span class="p">(</span><span class="o">*</span><span class="n">clu_device_selector</span><span class="p">)(</span>
+<div class="highlight highlight-c"><pre><span class="k">typedef</span> <span class="nf">cl_uint</span> <span class="p">(</span><span class="o">*</span><span class="n">clu_device_selector</span><span class="p">)(</span>
     <span class="cm">/* Array of available devices and respective information. */</span>
     <span class="n">CLUDeviceInfo</span><span class="o">*</span> <span class="n">devInfos</span><span class="p">,</span>
     <span class="cm">/* Number of devices in array. */</span>
@@ -456,13 +474,13 @@ the <code>clprofiler.h</code> header file.</p>
 <p>For the purpose of this explanation, we will consider that two command 
 queues are being used:</p>
 
-<div class="highlight"><pre><span class="n">cl_command_queue</span> <span class="n">queue0</span><span class="p">;</span> <span class="cm">/* Used for host-device data transfer. */</span>
+<div class="highlight highlight-c"><pre><span class="n">cl_command_queue</span> <span class="n">queue0</span><span class="p">;</span> <span class="cm">/* Used for host-device data transfer. */</span>
 <span class="n">cl_command_queue</span> <span class="n">queue1</span><span class="p">;</span> <span class="cm">/* Used for kernel execution. */</span>
 </pre></div>
 
 <p>Additionally, we will consider the following OpenCL events:</p>
 
-<div class="highlight"><pre><span class="n">cl_event</span> <span class="n">ev_transf_in</span><span class="p">;</span>  <span class="cm">/* Transfer data from host to device. */</span>
+<div class="highlight highlight-c"><pre><span class="n">cl_event</span> <span class="n">ev_transf_in</span><span class="p">;</span>  <span class="cm">/* Transfer data from host to device. */</span>
 <span class="n">cl_event</span> <span class="n">ev_kernel_A_1</span><span class="p">;</span> <span class="cm">/* Execute kernel A on device. */</span>
 <span class="n">cl_event</span> <span class="n">ev_kernel_B</span><span class="p">;</span>   <span class="cm">/* Execute kernel B on device. */</span>
 <span class="n">cl_event</span> <span class="n">ev_kernel_A_2</span><span class="p">;</span> <span class="cm">/* Execute kernel A on device again. */</span>
@@ -475,14 +493,14 @@ part of the application); and, 2) keep track of the device time required
 by the OpenCL events. The following instruction creates a new 
 <code>ProfCLProfile</code> structure:</p>
 
-<div class="highlight"><pre><span class="cm">/* Create a new ProfCLProfile structure. */</span>
+<div class="highlight highlight-c"><pre><span class="cm">/* Create a new ProfCLProfile structure. */</span>
 <span class="n">ProfCLProfile</span><span class="o">*</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">profcl_profile_new</span><span class="p">();</span>
 </pre></div>
 
 <p>In order to start measuring the relevant part of the application, the
 following instruction should be issued:</p>
 
-<div class="highlight"><pre><span class="cm">/* Start basic timming / profiling. */</span>
+<div class="highlight highlight-c"><pre><span class="cm">/* Start basic timming / profiling. */</span>
 <span class="n">profcl_profile_start</span><span class="p">(</span><span class="n">profile</span><span class="p">);</span>
 </pre></div>
 
@@ -492,14 +510,14 @@ defined events must be associated with the respective <code>clEnqueue*</code>
 OpenCL functions in order to be later analyzed. A typical workflow 
 may be finalized with the following instructions:</p>
 
-<div class="highlight"><pre><span class="cm">/* Finish all pending OpenCL operations. */</span>
+<div class="highlight highlight-c"><pre><span class="cm">/* Finish all pending OpenCL operations. */</span>
 <span class="n">clFinish</span><span class="p">(</span><span class="n">queue0</span><span class="p">);</span>
 <span class="n">clFinish</span><span class="p">(</span><span class="n">queue1</span><span class="p">);</span>
 </pre></div>
 
 <p>Profiling should be stopped at this point.</p>
 
-<div class="highlight"><pre><span class="n">profcl_profile_stop</span><span class="p">(</span><span class="n">profile</span><span class="p">);</span> 
+<div class="highlight highlight-c"><pre><span class="n">profcl_profile_stop</span><span class="p">(</span><span class="n">profile</span><span class="p">);</span> 
 </pre></div>
 
 <p>Now the events can be added to the profiler structure. The
@@ -510,7 +528,7 @@ it to be the same <em>semantic</em> event. This can be useful for aggregating
 execution times of events which occur innumerous times in a cyclic 
 fashion (in a <em>for</em> loop, for example). </p>
 
-<div class="highlight"><pre><span class="cm">/* Add events to be profiled/analyzed. */</span>
+<div class="highlight highlight-c"><pre><span class="cm">/* Add events to be profiled/analyzed. */</span>
 <span class="n">profcl_profile_add</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="s">"Transfer data to device"</span><span class="p">,</span> <span class="n">ev_transf_in</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
 <span class="n">profcl_profile_add</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="s">"Kernel A"</span><span class="p">,</span> <span class="n">ev_kernel_A_1</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
 <span class="n">profcl_profile_add</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="s">"Kernel B"</span><span class="p">,</span> <span class="n">ev_kernel_B</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
@@ -530,20 +548,41 @@ Profiler to perform the required calculations in order to determine
 the absolute and relative times of all events, and how these correlate
 with the total elapsed time of the relevant part of the application.</p>
 
-<div class="highlight"><pre><span class="n">profcl_profile_aggregate</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<div class="highlight highlight-c"><pre><span class="n">profcl_profile_aggregate</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
 </pre></div>
 
 <p>Finally, the complete benchmarking info can be printed:</p>
 
-<div class="highlight"><pre><span class="n">profcl_print_info</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">PROFCL_AGGEVDATA_SORT_TIME</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<div class="highlight highlight-c"><pre><span class="n">profcl_print_info</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">PROFCL_AGGEVDATA_SORT_TIME</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
 </pre></div>
 
-<p>Two detailed tables will be printed: one for individual events (sorted by 
-name or execution time), and another showing event overlaps, if any occurred.</p>
+<p>Two detailed tables will be shown on screen: one for individual events 
+(sorted by name or execution time), and another showing event overlaps, 
+if any occurred.</p>
 
-<p>Only at this time should the OpenCL events be freed.</p>
+<p>A list of all events can be exported to a file or stream using the 
+<code>profcl_export_info*</code> functions. </p>
 
-<div class="highlight"><pre><span class="n">clReleaseEvent</span><span class="p">(</span><span class="n">ev_transf_in</span><span class="p">);</span>
+<div class="highlight highlight-c"><pre><span class="n">profcl_export_info_file</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="s">"profileinfo.txt"</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+
+<p>Export options, such as field delimiters, field separators, and so on, 
+can be set using the <code>profcl_export_opts_set()</code> function. </p>
+
+<p>A Gantt chart type graph can be produced from the exported file (using
+the default options) via a Python script included with <em>cf4ocl</em>:</p>
+
+<p><code>$ python plot_events.py profileinfo.txt</code></p>
+
+<p><img src="images/gantt.png" alt="Events plot for file exported by test_profiler"></p>
+
+<p>A similar plot can also be produced with <a href="http://www.gnuplot.info/">gnuplot</a> using the <a href="http://se.wtb.tue.nl/sewiki/wonham/gantt.py">gantt.py</a>
+script.</p>
+
+<p>The OpenCL events can be freed after they have been added to the 
+profiler structure and before the program terminates.</p>
+
+<div class="highlight highlight-c"><pre><span class="n">clReleaseEvent</span><span class="p">(</span><span class="n">ev_transf_in</span><span class="p">);</span>
 <span class="n">clReleaseEvent</span><span class="p">(</span><span class="n">ev_kernel_A_1</span><span class="p">);</span>
 <span class="n">clReleaseEvent</span><span class="p">(</span><span class="n">ev_kernel_B</span><span class="p">);</span>
 <span class="n">clReleaseEvent</span><span class="p">(</span><span class="n">ev_kernel_A_2</span><span class="p">);</span>
@@ -557,16 +596,42 @@ is not critical because all of the error-prone <code>profcl_*</code> functions a
 their execution status code. No error handling is performed in this 
 explanation, though.</p>
 
-<p>For map events, CL Profiler provides the <code>profcl_profile_add_composite</code>
+<p>For map events, CL Profiler provides the <code>profcl_profile_add_composite()</code>
 function, which accepts two OpenCL events, one relative to the <em>map</em>
 operation, and the other to the <em>unmap</em> operation. The function uses
 the start instant of the <em>map</em> event, and the <em>end</em> instant of the
 <em>unmap</em> event, in order to build a composite semantic event.</p>
 
+<p><a name="usingclerrors"></a></p>
+
+<h3>
+<a name="234-using-cl-errors" class="anchor" href="#234-using-cl-errors"><span class="octicon octicon-link"></span></a>2.3.4. Using CL Errors</h3>
+
+<p>OpenCL functions usually return an error or status code, so that the
+client programmer can check if the function call was successful, and if
+not, what kind of problem occurred. The programmer can either check for 
+all possible errors for a given function call using the OpenCL error
+constants (which map the error codes), or can just return or print the 
+error code, and then look at the <a href="http://www.khronos.org/registry/cl/api/1.2/cl.h">cl.h</a> header to determine what error
+occurred. <em>CL Errors</em> allows for a third option: convert the error code
+into a human readable string. The usage is very simple, consisting of
+a single call to the <code>clerror_get()</code> function, passing the error code
+as an argument:</p>
+
+<div class="highlight highlight-c"><pre><span class="n">cl_int</span> <span class="n">status</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">clFinish</span><span class="p">(</span><span class="n">some_command_queue</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">!=</span> <span class="n">CL_SUCCESS</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"An error occurred: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">clerror_get</span><span class="p">(</span><span class="n">status</span><span class="p">));</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+<span class="p">...</span>
+</pre></div>
+
 <p><a name="usinggerrorframeworkgerrorf"></a></p>
 
 <h3>
-<a name="234-using-gerror-framework-gerrorf" class="anchor" href="#234-using-gerror-framework-gerrorf"><span class="octicon octicon-link"></span></a>2.3.4. Using GError Framework (GErrorF)</h3>
+<a name="235-using-gerror-framework-gerrorf" class="anchor" href="#235-using-gerror-framework-gerrorf"><span class="octicon octicon-link"></span></a>2.3.5. Using GError Framework (GErrorF)</h3>
 
 <p>The main purpose of GErrorF is to provide error handling constructs to 
 CL Utils and CL Profiler. No knowledge of GErrorF is required to use
@@ -577,7 +642,7 @@ to be used in any C application, a specific description is warranted.</p>
 explanation assumes some familiarity with 
 <a href="https://developer.gnome.org/glib/2.32/glib-Error-Reporting.html" title="GLib Error Reporting">GLib's error reporting</a>.</p>
 
-<p>GErrorF is defined by two macros in <code>gerrorf.h</code>:</p>
+<p>GErrorF is defined by three macros in <code>gerrorf.h</code>:</p>
 
 <ul>
 <li>
@@ -585,13 +650,18 @@ explanation assumes some familiarity with
 functions.</li>
 <li>
 <code>gef_if_error_goto</code> - Catches errors from GError aware functions.</li>
+<li>
+<code>gef_if_error_propagate_goto</code> - Same as previous macro, but propagates 
+error in a source GError object to a new destination GError object.
+Useful for wrapping errors thrown by library / third-party GError aware
+functions.</li>
 </ul><p>GErrorF establishes an error handling methodology for C programs not
 entirely dissimilar to the pattern used in Linux kernel development. 
 Any function producing recoverable runtime errors, from <code>main</code> to 
 functions located deeper in the call stack, can benefit from this 
 approach. The general usage of GErrorF is as follows:</p>
 
-<div class="highlight"><pre><span class="n">include</span> <span class="s">"gerrorf.h"</span><span class="p">;</span>
+<div class="highlight highlight-c"><pre><span class="n">include</span> <span class="s">"gerrorf.h"</span><span class="p">;</span>
 
 <span class="p">...</span>
 
