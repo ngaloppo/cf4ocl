@@ -3,32 +3,32 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
     <title>cf4ocl by FakenMC</title>
   </head>
 
   <body>
-
     <header>
-      <div class="container">
+      <div class="inner">
         <h1>cf4ocl</h1>
         <h2>C Framework for OpenCL</h2>
-
-        <section id="downloads">
-          <a href="https://github.com/FakenMC/cf4ocl/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/FakenMC/cf4ocl/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/FakenMC/cf4ocl" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
+        <a href="https://github.com/FakenMC/cf4ocl" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
 
-    <div class="container">
-      <section id="main_content">
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h1>
 
 <p>The C Framework for OpenCL, <em>cf4ocl</em>, is a pure C99 set of libraries 
@@ -48,15 +48,15 @@ iii), aim to verify that the library functions are working properly.
 Finally, the examples show how to integrate the library functions in 
 fully working OpenCL programs.</p>
 
-<p>The target platform of <em>cf4ocl</em> is Linux, although, being pure C99, it 
-can be compiled to other platforms as long as the dependencies, 
+<p><em>cf4ocl</em> is tested in Linux and Windows, although, being pure C99, it 
+should compile on other platforms, as long as the dependencies, 
 <a href="https://developer.gnome.org/glib/" title="GLib">GLib</a> and <a href="http://www.khronos.org/opencl/" title="OpenCL">OpenCL</a>, are met. The reference compiler is GCC with 
 <code>-Wall</code> and <code>-Wextra</code> flags activated. The code is verified with 
 <a href="http://cppcheck.sourceforge.net/" title="cppcheck">cppcheck</a> and is fully commented. API documentation can be generated 
 with <a href="http://www.doxygen.org/%E2%80%8E" title="Doxygen">Doxygen</a> via <code>make</code>.</p>
 
 <p>Library code is licensed under <a href="http://www.gnu.org/licenses/lgpl.html)" title="LGPLv3">LGPLv3</a>, while the remaining code is 
-licensed under <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
+licensed under <a href="http://www.gnu.org/licenses/gpl.html" title="GPLv3">GPLv3</a>.</p>
 
 <h1>
 <a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table of contents</h1>
@@ -74,14 +74,17 @@ licensed under <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
 2.1.  <a href="#dependencies">Dependencies</a><br>
 2.1.1.  <a href="#opencl">OpenCL</a><br>
 2.1.2.  <a href="#glib">GLib</a><br>
-2.2.  <a href="#libraryutilitiestestsandexamples">Library, utilities, tests and examples</a><br>
+2.2.  <a href="#downloadbuildandinstall">Download, build and install</a><br>
 2.3.  <a href="#usingthelibraryinanewproject">Using the library in a new project</a><br>
 2.3.1.  <a href="#compilingandlinking">Compiling and linking</a><br>
+2.3.1.1.  <a href="#cmake">CMake</a><br>
+2.3.1.2.  <a href="#gnumake">GNU Make</a><br>
+2.3.1.2.1.  <a href="#compiling">Compiling</a><br>
+2.3.1.2.2.  <a href="#linking">Linking</a><br>
 2.3.2.  <a href="#usingclutils">Using CL Utils</a><br>
 2.3.3.  <a href="#usingclprofiler">Using CL Profiler</a><br>
 2.3.4.  <a href="#usingclerrors">Using CL Errors</a><br>
 2.3.5.  <a href="#usinggerrorframeworkgerrorf">Using GError Framework (GErrorF)</a><br>
-2.4.  <a href="#generatingtheapidocumentation">Generating the API documentation</a><br>
 3.  <a href="#otherusefulcframeworks/utilitiesforopencl">Other useful C frameworks/utilities for OpenCL</a>  </p>
 
 <p><a name="introduction"></a></p>
@@ -255,8 +258,8 @@ installed.</p>
 <h3>
 <a name="212-glib" class="anchor" href="#212-glib"><span class="octicon octicon-link"></span></a>2.1.2. GLib</h3>
 
-<p>The simplest way to install <a href="https://developer.gnome.org/glib/" title="GLib">GLib</a> is using the package manager of
-the Linux distribution. For Debian and Ubuntu:</p>
+<p>The simplest way to install <a href="https://developer.gnome.org/glib/" title="GLib">GLib</a> on Linux is through the package 
+manager of the respective distribution. For Debian and Ubuntu:</p>
 
 <pre><code>$ sudo apt-get install libglib2.0-dev
 </code></pre>
@@ -264,31 +267,82 @@ the Linux distribution. For Debian and Ubuntu:</p>
 <p>It is also advisable to install the <code>libglib2.0-0-dbg</code> or equivalent
 package to allow debugging at the GLib level.</p>
 
-<p><a name="libraryutilitiestestsandexamples"></a></p>
+<p>This <a href="http://www.gtk.org/download/win32_tutorial.php">tutorial</a> explains
+how to install GLib in Windows.</p>
+
+<p><a name="downloadbuildandinstall"></a></p>
 
 <h2>
-<a name="22-library-utilities-tests-and-examples" class="anchor" href="#22-library-utilities-tests-and-examples"><span class="octicon octicon-link"></span></a>2.2. Library, utilities, tests and examples</h2>
+<a name="22-download-build-and-install" class="anchor" href="#22-download-build-and-install"><span class="octicon octicon-link"></span></a>2.2. Download, build and install</h2>
 
-<p>Assuming a working development environment with OpenCL and GLib 
-properly setup, to build the library, utils and examples it is necessary
-to run <code>make</code> within the <em>cf4ocl</em> directory.</p>
+<p><em>cf4ocl</em> uses the <a href="http://www.cmake.org/">CMake</a> build system. Assuming a working development 
+environment with GCC and CMake installed, and the dependencies (OpenCL
+and GLib) properly setup, either clone or download and extract <em>cf4ocl</em> 
+into a location of your preference. The <em>cf4ocl</em> directory tree will 
+have the following structure:</p>
 
-<p>It is possible to build only specific targets, for example:</p>
-
-<pre><code>$ make lib
-$ make utils
-$ make examples
+<pre><code>cf4ocl/
+|
++-- cmake
+|   |
+|   +-- Modules
+|
++-- images
+|
++-- scripts
+|
++-- src
+    |
+    +-- examples
+    |
+    +-- lib
+    |
+    +-- tests
+    |
+    +-- utils
 </code></pre>
 
-<p>If the build failed, confirm if OpenCL and GLib are properly installed,
-and if GCC can find the OpenCL headers and shared library. If not,
-set the headers location in the <code>CLINCLUDES</code> Makefile variable, and set
-the shared library location in the <code>CLLIBDIR</code> Makefile variable.</p>
+<p>Within the <em>cf4ocl</em> directory, create a folder named <code>build</code>. This is
+where the project will be built, such that the contents of the <em>cf4ocl</em> 
+folder (source code, scripts, etc.), are kept separate from the build 
+files. </p>
 
-<p>The tests should be compiled separately with:</p>
+<p>Next, <code>cd</code> into the <code>build</code> folder and run the <code>cmake ..</code> command. If
+OpenCL and GLib are successfully found by CMake, the Makefiles required
+for building and installing <em>cf4ocl</em> are created. If an error occurrs,
+it might be necessary to manually provide the location of these
+dependencies. In order to do so, run the <code>ccmake ..</code> command, which
+offers a configuration interface for this purpose. Alternatively, run
+the CMake GUI, chose the <em>cf4ocl</em> directory as the source code 
+location and the <code>build</code> directory as the place where to build the
+binaries. Specify the library and include locations for OpenCL and 
+GLib, click "Configure", then "Generate". The makefiles should now have 
+been generated.</p>
 
-<pre><code>$ make tests
+<p>In order to build the project, run <code>make</code> in the <code>build</code> folder. 
+Project installation can be accomplished with <code>make install</code>. By 
+default, <em>cf4ocl</em> is installed system wide, which requires the later
+command to be executed as root or administrator (e.g. using <code>sudo</code> in
+Linux, or an elevated priviledge command prompt on Windows). The
+install location can be changed with the <code>ccmake</code> command, or with the
+CMake GUI. The tests can be compiled separately with <code>make tests</code>.</p>
+
+<p>After installation, the <em>cf4ocl</em> shared library should be registered
+with <code>ldconfig</code> (Linux) or <code>regsvr32</code> (Windows), such that client
+applications can find it at runtime.</p>
+
+<p>The API documentation can be generated with <code>make</code> if <a href="http://www.doxygen.org/%E2%80%8E" title="Doxygen">Doxygen</a> 
+(version 1.8.3 or newer) is installed. In the <em>cf4ocl</em> directory run:</p>
+
+<pre><code>$ make doc
 </code></pre>
+
+<p>The documentation will be generated in the <code>./doc</code> folder. The direct
+use of the <code>doxygen</code> command should be avoided because 
+<a href="http://www.stack.nl/%7Edimitri/doxygen/manual/markdown.html" title="Doxygen Markdown">Doxygen's markdown</a> is not 100% compatible with the 
+<a href="https://help.github.com/articles/github-flavored-markdown" title="Github Flavored Markdown">GitHub Flavored Markdown</a> used in this document. When building 
+the documentation with <code>make</code>, the required conversion is performed 
+first.</p>
 
 <p><a name="usingthelibraryinanewproject"></a></p>
 
@@ -297,34 +351,72 @@ the shared library location in the <code>CLLIBDIR</code> Makefile variable.</p>
 
 <p>Any of the three elements of the library can be used in a workflow
 without the need to use the others. However, both CL Utils and CL 
-Profiler internally use the GError framework.</p>
+Profiler internally use the GError framework. The <em>cf4ocl</em> header
+includes all the definitions for the three elements of the library. This
+header can be included as follows:</p>
+
+<div class="highlight highlight-c"><pre><span class="cp">#include &lt;cf4ocl.h&gt;</span>
+</pre></div>
 
 <p><a name="compilingandlinking"></a></p>
 
 <h3>
 <a name="231-compiling-and-linking" class="anchor" href="#231-compiling-and-linking"><span class="octicon octicon-link"></span></a>2.3.1. Compiling and linking</h3>
 
-<p>When building a program based on <em>cf4ocl</em> (or any OpenCL program) with 
-GCC, it may be necessary to specify the location of the OpenCL headers 
-with the <code>-I</code> flag, and the location of the shared library 
-(libOpenCL.so) with the <code>-L</code> flag. If the OpenCL development files were
-installed from the package manager (e.g. the <code>ocl-icd-opencl-dev</code> 
-package in Debian and Ubuntu), this is usually not required.</p>
+<p><a name="cmake"></a></p>
 
-<p>Additionally, in order to <strong>compile</strong> a program with GLib (required by 
-<em>cf4ocl</em>), the following line should be added to the GCC syntax:</p>
+<h4>
+<a name="2311-cmake" class="anchor" href="#2311-cmake"><span class="octicon octicon-link"></span></a>2.3.1.1. CMake</h4>
+
+<p>If client code uses CMake as its build system, then it is very simple
+to integrate <em>cf4ocl</em>. Add the following lines to your CMakeLists.txt
+file:</p>
+
+<pre><code># Find required libraries
+find_package(PkgConfig REQUIRED)
+find_package(Cf4ocl REQUIRED)
+pkg_check_modules(GLIB REQUIRED glib-2.0&gt;=2.32.1)
+
+# Library include directories
+include_directories(${GLIB_INCLUDE_DIRS} ${CF4OCL_INCLUDE_DIRS})
+</code></pre>
+
+<p><em>cf4ocl</em> can be found by CMake through a module included in the project
+for this purpose. Take a look at the <a href="https://github.com/FakenMC/cl-ops/">CL-Ops</a>
+project for an example on how to do so.</p>
+
+<p><a name="gnumake"></a></p>
+
+<h4>
+<a name="2312-gnu-make" class="anchor" href="#2312-gnu-make"><span class="octicon octicon-link"></span></a>2.3.1.2. GNU Make</h4>
+
+<p><a name="compiling"></a></p>
+
+<h5>
+<a name="23121-compiling" class="anchor" href="#23121-compiling"><span class="octicon octicon-link"></span></a>2.3.1.2.1. Compiling</h5>
+
+<p>Depending on how <em>cf4ocl</em> was installed, it may be necessary to specify 
+the location of the <em>cf4ocl</em> header with the <code>-I</code> flag. The same is true
+for the GLib and OpenCL headers, which are included by the <em>cf4ocl</em>
+header. For GLib, instead of directly specifying the header location,
+it is also possible to use PkgConfig instead:</p>
 
 <pre><code>`pkg-config --cflags glib-2.0`
 </code></pre>
 
-<p>In order to <strong>link</strong> a program with GLib, it is necessary to add the 
-following line to the GCC syntax:</p>
+<p><a name="linking"></a></p>
 
-<pre><code>`pkg-config --libs glib-2.0`
+<h5>
+<a name="23122-linking" class="anchor" href="#23122-linking"><span class="octicon octicon-link"></span></a>2.3.1.2.2. Linking</h5>
+
+<p>It is necessary to specify the use of the <em>cf4ocl</em> with the <code>-l</code> flag,
+e.g.:</p>
+
+<pre><code>-lcf4ocl
 </code></pre>
 
-<p>These two lines will expand correctly to the <code>-I</code> and <code>-l</code> flags 
-required for compiling and linking, respectively.</p>
+<p>Again, depending on how <em>cf4ocl</em> was installed, it may be necessary to 
+specify the location of the <em>cf4ocl</em> shared library with the <code>-L</code> flag. </p>
 
 <p><a name="usingclutils"></a></p>
 
@@ -833,24 +925,6 @@ program execution will jump to the error handling block.</li>
 possible in C. However it is not to everyone's taste, and is thus
 a completely optional aspect of <em>cf4ocl</em>.</p>
 
-<p><a name="generatingtheapidocumentation"></a></p>
-
-<h2>
-<a name="24-generating-the-api-documentation" class="anchor" href="#24-generating-the-api-documentation"><span class="octicon octicon-link"></span></a>2.4. Generating the API documentation</h2>
-
-<p>The API documentation can be generated with <code>make</code> if <a href="http://www.doxygen.org/%E2%80%8E" title="Doxygen">Doxygen</a> 
-(version 1.8 or newer) is installed. In the <em>cf4ocl</em> directory run:</p>
-
-<pre><code>$ make docs
-</code></pre>
-
-<p>The documentation will be generated in the <code>./doc</code> folder. The direct
-use of the <code>doxygen</code> command should be avoided because 
-<a href="http://www.stack.nl/%7Edimitri/doxygen/manual/markdown.html" title="Doxygen Markdown">Doxygen's markdown</a> is not 100% compatible with the 
-<a href="https://help.github.com/articles/github-flavored-markdown" title="Github Flavored Markdown">GitHub Flavored Markdown</a> used in this document. When building 
-the documentation with <code>make</code>, the required conversion is performed 
-first.</p>
-
 <p><a name="otherusefulcframeworks/utilitiesforopencl"></a></p>
 
 <h1>
@@ -865,10 +939,26 @@ projects:</p>
 <li><a href="https://github.com/Computing-Language-Utility/CLU" title="Computing Language Utility">Computing Language Utility</a></li>
 <li><a href="http://tuxfan.github.io/ocl-mla/" title="OCL-MLA">OCL-MLA</a></li>
 </ul>
-      </section>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/FakenMC/cf4ocl/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/FakenMC/cf4ocl/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/FakenMC/cf4ocl"></a> is maintained by <a href="https://github.com/FakenMC">FakenMC</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-              <script type="text/javascript">
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
